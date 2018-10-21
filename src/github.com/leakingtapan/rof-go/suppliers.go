@@ -17,25 +17,35 @@ limitations under the License.
 package rof
 
 import (
-	"reflect"
+	"math/rand"
+	"time"
 )
 
-// Top level interface
-// Examples:
-type ObjectFactory interface {
-	Create(v interface{}) error
+func init() {
+	rand.Seed(time.Now().UnixNano())
 }
 
-// Supplier is a function that returns a values of certain type
-type Supplier func() interface{}
-
-var defaultFactory ObjectFactory = &primitiveFactory{
-	suppliers: map[reflect.Kind]Supplier{
-		reflect.Int:   intItf(intGen),
-		reflect.Int32: int32Itf(int32Gen),
-	},
+// intGen() return a random value of int
+func intGen() int {
+	res := rand.Int()
+	return res
 }
 
-func Create(v interface{}) error {
-	return defaultFactory.Create(v)
+// int32Gen() return a random value of int32
+func int32Gen() int32 {
+	res := rand.Int31()
+	return res
+}
+
+// AUTO gen? or use reflection?
+func intItf(f func() int) func() interface{} {
+	return func() interface{} {
+		return f()
+	}
+}
+
+func int32Itf(f func() int32) func() interface{} {
+	return func() interface{} {
+		return f()
+	}
 }

@@ -16,26 +16,25 @@ limitations under the License.
 
 package rof
 
-import (
-	"reflect"
-)
+import "reflect"
 
-// Top level interface
-// Examples:
-type ObjectFactory interface {
-	Create(v interface{}) error
+type primitiveFactory struct {
+	suppliers map[reflect.Kind]Supplier
 }
 
-// Supplier is a function that returns a values of certain type
-type Supplier func() interface{}
+func (f *primitiveFactory) Create(v interface{}) error {
+	prtValue := reflect.ValueOf(v)
+	if prtValue.Kind() != reflect.Ptr || prtValue.IsNil() {
+		return &InvalidInputError{v}
+	}
 
-var defaultFactory ObjectFactory = &primitiveFactory{
-	suppliers: map[reflect.Kind]Supplier{
-		reflect.Int:   intItf(intGen),
-		reflect.Int32: int32Itf(int32Gen),
-	},
-}
+	value := reflect.Indirect(prtValue)
+	supplier, exist := f.suppliers[value.Kind()]
+	if !exist {
+		return &UnknownTypeError{value}
+	}
 
-func Create(v interface{}) error {
-	return defaultFactory.Create(v)
+	value.Set(reflect.ValueOf(supplier()))
+
+	return nil
 }

@@ -25,6 +25,11 @@ import (
 )
 
 var _ = Describe("object factory", func() {
+	It("should return error for nil", func() {
+		err := Create(nil)
+		Expect(err).ToNot(BeNil())
+	})
+
 	It("should generate random bool", func() {
 		var value bool
 
@@ -85,7 +90,7 @@ var _ = Describe("object factory", func() {
 	})
 
 	It("should generate random map", func() {
-		var value map[int8]string
+		var value map[int]string
 
 		err := Create(&value)
 		Expect(err).To(BeNil())

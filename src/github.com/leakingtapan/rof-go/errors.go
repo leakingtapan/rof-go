@@ -19,11 +19,11 @@ package rof
 import "fmt"
 
 type InvalidInputError struct {
-	v interface{}
+	msg string
 }
 
 func (e *InvalidInputError) Error() string {
-	return fmt.Sprintf("Invalid input: [%v]", e.v)
+	return fmt.Sprintf("invalid input: %s", e.msg)
 }
 
 type UnknownTypeError struct {
@@ -31,5 +31,5 @@ type UnknownTypeError struct {
 }
 
 func (e *UnknownTypeError) Error() string {
-	return fmt.Sprintf("Kind is unknown: [%v]", e.v)
+	return fmt.Sprintf("type is unknown: [%v]", e.v)
 }

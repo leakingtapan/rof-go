@@ -36,17 +36,34 @@ var _ = Describe("object factory", func() {
 		err := Create(&value)
 		Expect(err).To(BeNil())
 
-		testType(&value)
-		fmt.Println(": ", value)
+		testType(value)
 	})
+
 	It("should generate random int", func() {
 		var value int
 
 		err := Create(&value)
 		Expect(err).To(BeNil())
 
-		testType(&value)
-		fmt.Println(": ", value)
+		testType(value)
+	})
+
+	It("should generate random int8", func() {
+		var value int8
+
+		err := Create(&value)
+		Expect(err).To(BeNil())
+
+		testType(value)
+	})
+
+	It("should generate random int16", func() {
+		var value int16
+
+		err := Create(&value)
+		Expect(err).To(BeNil())
+
+		testType(value)
 	})
 
 	It("should generate random int32", func() {
@@ -55,8 +72,16 @@ var _ = Describe("object factory", func() {
 		err := Create(&value)
 		Expect(err).To(BeNil())
 
-		testType(&value)
-		fmt.Println(": ", value)
+		testType(value)
+	})
+
+	It("should generate random int64", func() {
+		var value int64
+
+		err := Create(&value)
+		Expect(err).To(BeNil())
+
+		testType(value)
 	})
 
 	It("should generate random string", func() {
@@ -65,8 +90,7 @@ var _ = Describe("object factory", func() {
 		err := Create(&value)
 		Expect(err).To(BeNil())
 
-		testType(&value)
-		fmt.Println(": ", value)
+		testType(value)
 	})
 
 	It("should generate random array", func() {
@@ -75,8 +99,7 @@ var _ = Describe("object factory", func() {
 		err := Create(&value)
 		Expect(err).To(BeNil())
 
-		testType(&value)
-		fmt.Println(": ", value)
+		testType(value)
 	})
 
 	It("should generate random slice", func() {
@@ -85,8 +108,7 @@ var _ = Describe("object factory", func() {
 		err := Create(&value)
 		Expect(err).To(BeNil())
 
-		testType(&value)
-		fmt.Println(": ", value)
+		testType(value)
 	})
 
 	It("should generate random map", func() {
@@ -95,33 +117,11 @@ var _ = Describe("object factory", func() {
 		err := Create(&value)
 		Expect(err).To(BeNil())
 
-		testType(&value)
-		fmt.Println(": ", value)
+		testType(value)
 	})
 })
 
 func testType(x interface{}) {
 	v := reflect.ValueOf(x)
-	switch v.Kind() {
-	case reflect.Bool:
-		fmt.Printf("bool: %v\t", v.Bool())
-	case reflect.Int, reflect.Int8, reflect.Int32, reflect.Int64:
-		fmt.Printf("int: %v\t", v.Int())
-	case reflect.Uint, reflect.Uint8, reflect.Uint32, reflect.Uint64:
-		fmt.Printf("uint: %v\t", v.Uint())
-	case reflect.Float32, reflect.Float64:
-		fmt.Printf("float: %v\t", v.Float())
-	case reflect.String:
-		fmt.Printf("string: %v\t", v.String())
-	case reflect.Slice:
-		fmt.Printf("slice: len=%d, %v\t", v.Len(), v.Interface())
-	case reflect.Map:
-		fmt.Printf("map: %v\t", v.Interface())
-	case reflect.Chan:
-		fmt.Printf("chan %v\t", v.Interface())
-	case reflect.Ptr:
-		fmt.Printf("ptr %v\t", v.Type())
-	default:
-		fmt.Println(x)
-	}
+	fmt.Printf("%s: %v\n", v.Kind(), v.Interface())
 }

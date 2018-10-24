@@ -43,7 +43,7 @@ var defaultFactory ObjectFactory = &defaultObjectFactory{
 		//reflect.Uint8:  funcWrap(int8Func),
 		//reflect.Uint32: funcWrap(int32Func),
 		//reflect.Uint64: funcWrap(int64Func),
-		reflect.String: funcWrap(strGen),
+		reflect.String: funcWrap(StrFunc),
 	},
 }
 
@@ -58,7 +58,7 @@ func (f *defaultObjectFactory) Create(ptr interface{}) error {
 		return &InvalidInputError{fmt.Sprintf("%v is not a pointer or is nil", ptr)}
 	}
 
-	value := reflect.Indirect(ptrValue)
+	value := ptrValue.Elem()
 
 	// create for primitive type
 	// TODO: match by type so that custom type is configurable
@@ -94,7 +94,7 @@ func (f *defaultObjectFactory) createFrom(t reflect.Type) reflect.Value {
 		panic(err)
 	}
 
-	return reflect.Indirect(rv)
+	return rv.Elem()
 }
 
 func (f *defaultObjectFactory) createArray(value reflect.Value) {

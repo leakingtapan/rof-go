@@ -16,25 +16,80 @@ limitations under the License.
 
 package rof
 
-import "reflect"
+import (
+	"fmt"
+	"reflect"
+)
 
 type primitiveFactory struct {
 	suppliers map[reflect.Kind]Supplier
 }
 
+// v is a pointer to the value
 func (f *primitiveFactory) Create(v interface{}) error {
-	prtValue := reflect.ValueOf(v)
-	if prtValue.Kind() != reflect.Ptr || prtValue.IsNil() {
+	ptrValue := reflect.ValueOf(v)
+	if ptrValue.Kind() != reflect.Ptr || ptrValue.IsNil() {
 		return &InvalidInputError{v}
 	}
 
-	value := reflect.Indirect(prtValue)
+	value := reflect.Indirect(ptrValue)
 	supplier, exist := f.suppliers[value.Kind()]
-	if !exist {
-		return &UnknownTypeError{value}
+	if exist {
+		value.Set(reflect.ValueOf(supplier()))
+		return nil
 	}
 
-	value.Set(reflect.ValueOf(supplier()))
+	switch value.Kind() {
+	case reflect.Array:
+		size := value.Len()
+		typ := value.Type()
+		for i := 0; i < size; i++ {
+			elemValue := f.createFrom(typ.Elem())
+			value.Index(i).Set(elemValue)
+		}
+		return nil
+	case reflect.Slice:
+		typ := value.Type()
+		//TODO: configurable size
+		size := 10
+		s := reflect.MakeSlice(typ, 0, size)
+		for i := 0; i < size; i++ {
+			elemValue := f.createFrom(typ.Elem())
+			s = reflect.Append(s, elemValue)
+		}
+		value.Set(s)
+		return nil
+	case reflect.Map:
+		typ := value.Type()
+		keyTyp := typ.Key()
+		valueTyp := typ.Elem()
+		size := 10
+		m := reflect.MakeMap(typ)
+		for i := 0; i < size; i++ {
+			keyValue := f.createFrom(keyTyp)
+			elemValue := f.createFrom(valueTyp)
+			fmt.Println(keyValue)
+			m.MapIndex(keyValue).Set(elemValue)
+		}
+		value.Set(m)
+		return nil
+	case reflect.Struct:
+		return nil
+	}
 
-	return nil
+	// handle Array, Slice, Map and Struct
+	return &UnknownTypeError{value}
+}
+
+// creates a reflect.Value for given reflect.Type
+func (f *primitiveFactory) createFrom(t reflect.Type) reflect.Value {
+	rv := reflect.New(t)
+	err := f.Create(rv.Interface())
+	if err != nil {
+		// happens when type is not supported
+		// eg. Pointer type *int
+		panic(err)
+	}
+
+	return reflect.Indirect(rv)
 }

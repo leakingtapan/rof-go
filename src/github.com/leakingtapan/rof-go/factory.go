@@ -26,13 +26,20 @@ type ObjectFactory interface {
 	Create(v interface{}) error
 }
 
-// Supplier is a function that returns a values of certain type
-type Supplier func() interface{}
-
 var defaultFactory ObjectFactory = &primitiveFactory{
 	suppliers: map[reflect.Kind]Supplier{
-		reflect.Int:   intItf(intGen),
-		reflect.Int32: int32Itf(int32Gen),
+		reflect.Bool:  funcWrap(BoolFunc),
+		reflect.Int:   funcWrap(IntFunc),
+		reflect.Int8:  funcWrap(Int8Func),
+		reflect.Int16: funcWrap(Int16Func),
+		reflect.Int32: funcWrap(Int32Func),
+		reflect.Int64: funcWrap(Int64Func),
+		//reflect.Uint:   funcWrap(intFunc),
+		//reflect.Uint8:  funcWrap(int8Func),
+		//reflect.Uint32: funcWrap(int32Func),
+		//reflect.Uint64: funcWrap(int64Func),
+
+		reflect.String: funcWrap(strGen),
 	},
 }
 

@@ -17,7 +17,6 @@ limitations under the License.
 package rof
 
 import (
-	"fmt"
 	"reflect"
 )
 
@@ -33,12 +32,15 @@ func (f *primitiveFactory) Create(v interface{}) error {
 	}
 
 	value := reflect.Indirect(ptrValue)
+
+	// create for primitive type
 	supplier, exist := f.suppliers[value.Kind()]
 	if exist {
 		value.Set(reflect.ValueOf(supplier()))
 		return nil
 	}
 
+	// create for composite type
 	switch value.Kind() {
 	case reflect.Array:
 		size := value.Len()
@@ -61,23 +63,19 @@ func (f *primitiveFactory) Create(v interface{}) error {
 		return nil
 	case reflect.Map:
 		typ := value.Type()
-		keyTyp := typ.Key()
-		valueTyp := typ.Elem()
 		size := 10
 		m := reflect.MakeMap(typ)
-		for i := 0; i < size; i++ {
-			keyValue := f.createFrom(keyTyp)
-			elemValue := f.createFrom(valueTyp)
-			fmt.Println(keyValue)
-			m.MapIndex(keyValue).Set(elemValue)
-		}
 		value.Set(m)
+		for i := 0; i < size; i++ {
+			keyValue := f.createFrom(typ.Key())
+			elemValue := f.createFrom(typ.Elem())
+			value.SetMapIndex(keyValue, elemValue)
+		}
 		return nil
 	case reflect.Struct:
 		return nil
 	}
 
-	// handle Array, Slice, Map and Struct
 	return &UnknownTypeError{value}
 }
 

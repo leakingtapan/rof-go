@@ -23,35 +23,41 @@ import (
 	"time"
 )
 
-var (
-	BoolFunc       func() bool  = boolGen
-	IntFunc        func() int   = intGen
-	Int8Func       func() int8  = int8Gen
-	Int16Func      func() int16 = int16Gen
-	Int32Func      func() int32 = int32Gen
-	Int64Func      func() int64 = int64Gen
-	UintFunc       func() uint
-	Uint8Func      func() uint8
-	Uint16Func     func() uint16
-	Uint32Func     func() uint32
-	Uint64Func     func() uint64
-	UintptrFunc    func() uintptr
-	Float32Func    func() float32
-	Float64Func    func() float64
-	Complex64Func  func() complex64
-	Complex128Func func() complex128
-	StrFunc        func() string = strGen
-)
-
 func init() {
 	rand.Seed(time.Now().UnixNano())
+
+	defaultSuppliers = map[reflect.Type]Supplier{}
+	for _, f := range funcs {
+		defaultSuppliers.SetFunc(f)
+	}
 }
+
+// Default functions used to generate random values
+var (
+	funcs = []interface{}{
+		boolGen,
+		intGen,
+		int8Gen,
+		int16Gen,
+		int32Gen,
+		int64Gen,
+		uintGen,
+		uint8Gen,
+		uint16Gen,
+		uint32Gen,
+		uint64Gen,
+		float32Gen,
+		float64Gen,
+		complex64Gen,
+		complex128Gen,
+		strGen,
+	}
+)
 
 func boolGen() bool {
 	return rand.Int31() > (math.MaxInt32 >> 1)
 }
 
-// intGen() return a random value of int
 func intGen() int {
 	return rand.Int()
 }
@@ -64,7 +70,6 @@ func int16Gen() int16 {
 	return int16(intGen())
 }
 
-// int32Gen() return a random value of int32
 func int32Gen() int32 {
 	return rand.Int31()
 }
@@ -73,25 +78,41 @@ func int64Gen() int64 {
 	return rand.Int63()
 }
 
-//func uintGen() uint {
-//	return rand.UInt()
-//}
-//
-//func uint8Gen() uint8 {
-//	return int8(intGen())
-//}
-//
-//func uint16Gen() uint16 {
-//	return int16(intGen())
-//}
-//
-//func uint32Gen() uint32 {
-//	return rand.Int31()
-//}
-//
-//func uint64Gen() uint64 {
-//	return rand.Int63()
-//}
+func uintGen() uint {
+	return uint(intGen())
+}
+
+func uint8Gen() uint8 {
+	return uint8(int8Gen())
+}
+
+func uint16Gen() uint16 {
+	return uint16(int16Gen())
+}
+
+func uint32Gen() uint32 {
+	return uint32(int32Gen())
+}
+
+func uint64Gen() uint64 {
+	return uint64(int64Gen())
+}
+
+func float32Gen() float32 {
+	return rand.Float32()
+}
+
+func float64Gen() float64 {
+	return rand.Float64()
+}
+
+func complex64Gen() complex64 {
+	return complex(float32Gen(), float32Gen())
+}
+
+func complex128Gen() complex128 {
+	return complex(float64Gen(), float64Gen())
+}
 
 const (
 	alphanumerics = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -109,6 +130,25 @@ func strGen() string {
 
 // Supplier is a function that returns a values of certain type
 type Supplier func() interface{}
+
+var defaultSuppliers suppliers
+
+type suppliers map[reflect.Type]Supplier
+
+func (s suppliers) SetFunc(f interface{}) {
+	rf := reflect.ValueOf(f)
+	if rf.IsNil() || rf.Kind() != reflect.Func {
+		panic("f is nil or is not function")
+	}
+
+	fTyp := rf.Type()
+	if fTyp.NumIn() != 0 || fTyp.NumOut() != 1 {
+		panic("function f is not of type func f() interface{}")
+	}
+
+	outType := fTyp.Out(0)
+	s[outType] = funcWrap(f)
+}
 
 // wrap a function f as supplier
 func funcWrap(f interface{}) Supplier {

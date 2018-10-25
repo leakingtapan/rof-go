@@ -84,6 +84,105 @@ var _ = Describe("object factory", func() {
 		testType(value)
 	})
 
+	It("should generate random uint", func() {
+		var value uint
+
+		err := Create(&value)
+		Expect(err).To(BeNil())
+
+		testType(value)
+	})
+
+	It("should generate random uint8", func() {
+		var value uint8
+
+		err := Create(&value)
+		Expect(err).To(BeNil())
+
+		testType(value)
+	})
+
+	It("should generate random uint16", func() {
+		var value uint16
+
+		err := Create(&value)
+		Expect(err).To(BeNil())
+
+		testType(value)
+	})
+
+	It("should generate random uint32", func() {
+		var value uint32
+
+		err := Create(&value)
+		Expect(err).To(BeNil())
+
+		testType(value)
+	})
+
+	It("should generate random uint64", func() {
+		var value uint64
+
+		err := Create(&value)
+		Expect(err).To(BeNil())
+
+		testType(value)
+	})
+
+	It("should generate random float32", func() {
+		var value float32
+
+		err := Create(&value)
+		Expect(err).To(BeNil())
+
+		testType(value)
+	})
+
+	It("should generate random float64", func() {
+		var value float64
+
+		err := Create(&value)
+		Expect(err).To(BeNil())
+
+		testType(value)
+	})
+
+	It("should generate random complex64", func() {
+		var value complex64
+
+		err := Create(&value)
+		Expect(err).To(BeNil())
+
+		testType(value)
+	})
+
+	It("should generate random complex128", func() {
+		var value complex128
+
+		err := Create(&value)
+		Expect(err).To(BeNil())
+
+		testType(value)
+	})
+
+	It("should generate random byte", func() {
+		var value byte
+
+		err := Create(&value)
+		Expect(err).To(BeNil())
+
+		testType(value)
+	})
+
+	It("should generate random rune", func() {
+		var value rune
+
+		err := Create(&value)
+		Expect(err).To(BeNil())
+
+		testType(value)
+	})
+
 	It("should generate random string", func() {
 		var value string
 

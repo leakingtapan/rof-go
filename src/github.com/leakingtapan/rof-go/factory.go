@@ -32,23 +32,23 @@ type ObjectFactory interface {
 }
 
 var defaultFactory ObjectFactory = &defaultObjectFactory{
-	suppliers: map[reflect.Kind]Supplier{
-		reflect.Bool:  funcWrap(BoolFunc),
-		reflect.Int:   funcWrap(IntFunc),
-		reflect.Int8:  funcWrap(Int8Func),
-		reflect.Int16: funcWrap(Int16Func),
-		reflect.Int32: funcWrap(Int32Func),
-		reflect.Int64: funcWrap(Int64Func),
-		//reflect.Uint:   funcWrap(intFunc),
-		//reflect.Uint8:  funcWrap(int8Func),
-		//reflect.Uint32: funcWrap(int32Func),
-		//reflect.Uint64: funcWrap(int64Func),
-		reflect.String: funcWrap(StrFunc),
-	},
+	//suppliers: map[reflect.Kind]Supplier{
+	//	reflect.Bool:  funcWrap(BoolFunc),
+	//	reflect.Int:   funcWrap(IntFunc),
+	//	reflect.Int8:  funcWrap(Int8Func),
+	//	reflect.Int16: funcWrap(Int16Func),
+	//	reflect.Int32: funcWrap(Int32Func),
+	//	reflect.Int64: funcWrap(Int64Func),
+	//	//reflect.Uint:   funcWrap(intFunc),
+	//	//reflect.Uint8:  funcWrap(int8Func),
+	//	//reflect.Uint32: funcWrap(int32Func),
+	//	//reflect.Uint64: funcWrap(int64Func),
+	//	reflect.String: funcWrap(StrFunc),
+	//},
 }
 
 type defaultObjectFactory struct {
-	suppliers map[reflect.Kind]Supplier
+	//suppliers map[reflect.Kind]Supplier
 }
 
 // ptr is a pointer to a value that is to be initialized by the factory
@@ -62,7 +62,7 @@ func (f *defaultObjectFactory) Create(ptr interface{}) error {
 
 	// create for primitive type
 	// TODO: match by type so that custom type is configurable
-	supplier, exist := f.suppliers[value.Kind()]
+	supplier, exist := defaultSuppliers[value.Type()]
 	if exist {
 		value.Set(reflect.ValueOf(supplier()))
 		return nil

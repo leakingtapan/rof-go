@@ -21,35 +21,29 @@ import (
 	"reflect"
 )
 
+// Top level method
 func Create(v interface{}) error {
 	return defaultFactory.Create(v)
 }
 
 // Top level interface
-// Examples:
+//
+//   import (
+//       . "github.com/leakingtapan/rof-go"
+//   )
+//
+//   func main() {
+//       var v int
+//       err := Create(&v)
+//   }
+//
 type ObjectFactory interface {
 	Create(v interface{}) error
 }
 
-var defaultFactory ObjectFactory = &defaultObjectFactory{
-	//suppliers: map[reflect.Kind]Supplier{
-	//	reflect.Bool:  funcWrap(BoolFunc),
-	//	reflect.Int:   funcWrap(IntFunc),
-	//	reflect.Int8:  funcWrap(Int8Func),
-	//	reflect.Int16: funcWrap(Int16Func),
-	//	reflect.Int32: funcWrap(Int32Func),
-	//	reflect.Int64: funcWrap(Int64Func),
-	//	//reflect.Uint:   funcWrap(intFunc),
-	//	//reflect.Uint8:  funcWrap(int8Func),
-	//	//reflect.Uint32: funcWrap(int32Func),
-	//	//reflect.Uint64: funcWrap(int64Func),
-	//	reflect.String: funcWrap(StrFunc),
-	//},
-}
+var defaultFactory ObjectFactory = &defaultObjectFactory{}
 
-type defaultObjectFactory struct {
-	//suppliers map[reflect.Kind]Supplier
-}
+type defaultObjectFactory struct{}
 
 // ptr is a pointer to a value that is to be initialized by the factory
 func (f *defaultObjectFactory) Create(ptr interface{}) error {
@@ -61,7 +55,6 @@ func (f *defaultObjectFactory) Create(ptr interface{}) error {
 	value := ptrValue.Elem()
 
 	// create for primitive type
-	// TODO: match by type so that custom type is configurable
 	supplier, exist := defaultSuppliers[value.Type()]
 	if exist {
 		value.Set(reflect.ValueOf(supplier()))

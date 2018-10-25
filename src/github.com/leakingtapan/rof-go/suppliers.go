@@ -26,10 +26,16 @@ import (
 func init() {
 	rand.Seed(time.Now().UnixNano())
 
-	defaultSuppliers = map[reflect.Type]Supplier{}
+	defaultSuppliers = map[reflect.Type]supplier{}
 	for _, f := range funcs {
-		defaultSuppliers.SetFunc(f)
+		defaultSuppliers.setFunc(f)
 	}
+}
+
+// SetFunc sets the default function if it already exists
+// Or a new one will be added
+func SetFunc(f interface{}) {
+	defaultSuppliers.setFunc(f)
 }
 
 // Default functions used to generate random values
@@ -53,6 +59,10 @@ var (
 		strGen,
 	}
 )
+
+//////////////////////////////
+// Default built-in functions
+//////////////////////////////
 
 func boolGen() bool {
 	return rand.Int31() > (math.MaxInt32 >> 1)
@@ -128,14 +138,14 @@ func strGen() string {
 	return string(res)
 }
 
-// Supplier is a function that returns a values of certain type
-type Supplier func() interface{}
+// supplier is a function that returns a values of certain type
+type supplier func() interface{}
 
 var defaultSuppliers suppliers
 
-type suppliers map[reflect.Type]Supplier
+type suppliers map[reflect.Type]supplier
 
-func (s suppliers) SetFunc(f interface{}) {
+func (s suppliers) setFunc(f interface{}) {
 	rf := reflect.ValueOf(f)
 	if rf.IsNil() || rf.Kind() != reflect.Func {
 		panic("f is nil or is not function")
@@ -151,7 +161,7 @@ func (s suppliers) SetFunc(f interface{}) {
 }
 
 // wrap a function f as supplier
-func funcWrap(f interface{}) Supplier {
+func funcWrap(f interface{}) supplier {
 	rv := reflect.ValueOf(f)
 	if rv.Kind() != reflect.Func {
 		panic("cannot wrap f. f is not a function")

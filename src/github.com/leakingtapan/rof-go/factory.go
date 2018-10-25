@@ -70,6 +70,7 @@ func (f *defaultObjectFactory) Create(ptr interface{}) error {
 	case reflect.Map:
 		f.createMap(value)
 	case reflect.Struct:
+		f.createStruct(value)
 	default:
 		return &UnknownTypeError{value}
 	}
@@ -122,4 +123,20 @@ func (f *defaultObjectFactory) createMap(value reflect.Value) {
 		elemValue := f.createFrom(typ.Elem())
 		value.SetMapIndex(keyValue, elemValue)
 	}
+}
+
+func (f *defaultObjectFactory) createStruct(value reflect.Value) {
+	typ := value.Type()
+	sPtr := reflect.New(typ)
+	s := sPtr.Elem()
+
+	numField := s.NumField()
+	for i := 0; i < numField; i++ {
+		field := s.Field(i)
+		if field.CanSet() {
+			field.Set(f.createFrom(field.Type()))
+		}
+	}
+
+	value.Set(s)
 }

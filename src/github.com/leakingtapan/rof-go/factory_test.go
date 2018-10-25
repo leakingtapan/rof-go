@@ -219,6 +219,23 @@ var _ = Describe("object factory", func() {
 
 		testType(value)
 	})
+
+	It("should generate random struct", func() {
+		var value struct {
+			First string
+			Last  string
+			age   int
+			Songs []struct {
+				Name string
+				Time int
+			}
+		}
+
+		err := Create(&value)
+		Expect(err).To(BeNil())
+
+		testType(value)
+	})
 })
 
 func testType(x interface{}) {

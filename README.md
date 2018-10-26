@@ -68,13 +68,17 @@ Each built-in types are creates using pre-built function similar to following si
 
 ```
 
-A custom function can be passed in using `SetFunc` API:
+A custom function can be passed in using `rof.SetFunc` API:
 
 ```go
     rof.SetFunc(func() string {
         return "my own string"
     })
+    
+    var str string
+    rof.Create(&str)
+    fmt.Println(str) // "my own string"
 
 ```
 
-Then this functio will be used in all the following variable creation.
+Then this function will be used in following variable creation.

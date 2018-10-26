@@ -6,7 +6,6 @@ Object Factory Go populates Go struct with randome value. This greatly saves tim
 Random Go primitives can be created with simpily two lines of code:
 
 ```go
-
     package main
     
     import rof "github.com/leakingtapan/rof-go"
@@ -29,7 +28,6 @@ Random Go primitives can be created with simpily two lines of code:
 Fields of composite object will be populated recursively.
 
 ```go
-
     package main
     
     import rof "github.com/leakingtapan/rof-go"
@@ -51,17 +49,19 @@ Fields of composite object will be populated recursively.
 
 ### Supported Built-in Types
 * Primitives Types:
+  - bool
   - int, int8, int16, int32, int64
   - uint, uint8, uint16, uint32, uint64
+  - float32, float64
+  - complex64, complex128
+  - string
 * Composite Types:
   - [time.Time](https://golang.org/pkg/time/#Time)
-
 
 ### Customize function providers
 Each built-in types are creates using pre-built function similar to following signature:
 
 ```go
-
     func intFunc() int {
         return 128
     }
@@ -71,7 +71,6 @@ Each built-in types are creates using pre-built function similar to following si
 A custom function can be passed in using `SetFunc` API:
 
 ```go
-
     rof.SetFunc(func() string {
         return "my own string"
     })

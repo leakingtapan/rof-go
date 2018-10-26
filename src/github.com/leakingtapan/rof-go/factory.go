@@ -130,10 +130,10 @@ func (f *defaultObjectFactory) createStruct(value reflect.Value) {
 	sPtr := reflect.New(typ)
 	s := sPtr.Elem()
 
-	numField := s.NumField()
-	for i := 0; i < numField; i++ {
+	for i := 0; i < s.NumField(); i++ {
 		field := s.Field(i)
 		if field.CanSet() {
+			// Skip private field that cannot be set
 			field.Set(f.createFrom(field.Type()))
 		}
 	}

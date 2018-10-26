@@ -23,6 +23,6 @@ import (
 
 var _ = Describe("suppliers", func() {
 	It("should init default suppliers", func() {
-		Expect(len(defaultSuppliers)).To(Equal(16))
+		Expect(len(funcs)).To(Equal(17))
 	})
 })

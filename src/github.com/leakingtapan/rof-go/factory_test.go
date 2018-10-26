@@ -19,6 +19,7 @@ package rof_test
 import (
 	"fmt"
 	"reflect"
+	"time"
 
 	. "github.com/leakingtapan/rof-go"
 	. "github.com/onsi/ginkgo"
@@ -235,6 +236,48 @@ var _ = Describe("object factory", func() {
 		Expect(err).To(BeNil())
 
 		testType(value)
+	})
+
+	It("should generate random time", func() {
+		var value time.Time
+
+		err := Create(&value)
+		testType(value)
+
+		Expect(err).To(BeNil())
+	})
+
+	It("should generate random int with override customer function", func() {
+		SetFunc(func() int {
+			return -1
+		})
+
+		var value int
+		err := Create(&value)
+		testType(value)
+
+		Expect(err).To(BeNil())
+		Expect(value).To(Equal(-1))
+	})
+
+	It("should generate random struct with customer function", func() {
+		type A struct {
+			Name string
+			City string
+		}
+		SetFunc(func() A {
+			return A{
+				Name: "Alex",
+				City: "Seattle",
+			}
+		})
+
+		var value A
+		err := Create(&value)
+		testType(value)
+
+		Expect(err).To(BeNil())
+		Expect(value).To(Equal(A{Name: "Alex", City: "Seattle"}))
 	})
 })
 

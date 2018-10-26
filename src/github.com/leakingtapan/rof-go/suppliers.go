@@ -57,6 +57,7 @@ var (
 		complex64Gen,
 		complex128Gen,
 		strGen,
+		timeGen,
 	}
 )
 
@@ -122,6 +123,10 @@ func complex64Gen() complex64 {
 
 func complex128Gen() complex128 {
 	return complex(float64Gen(), float64Gen())
+}
+
+func timeGen() time.Time {
+	return time.Now()
 }
 
 const (

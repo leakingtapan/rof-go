@@ -15,7 +15,7 @@ package.ObjectFactoryGo = {
     build-system = bgo-wrap-make;
     build-tools = {
         1.0 = {
-            BrazilMakeGo = 1.1;
+            BrazilMakeGo = 2.0;
             GoLang = 1.0;
         };
     };

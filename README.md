@@ -1,0 +1,81 @@
+# Object Factory Go
+Object Factory Go populates Go struct with randome value. This greatly saves time to create randomized object in unit testing. It carries the same philosophy as [Reflection Object Factory](https://github.com/leakingtapan/rof) in Java.
+
+## Usage 
+### Create Random Primitives
+Random Go primitives can be created with simpily two lines of code:
+
+```go
+
+    package main
+    
+    import rof "github.com/leakingtapan/rof-go"
+    
+    func main() {
+        // create random int
+        // pointer is required for the varible
+        var value int
+        rof.Create(&value)
+        
+        // create random string
+        // pointer is required for the variable
+        var str string
+        rof.Create(&str)
+    }
+
+```
+
+### Create Random Composite Object
+Fields of composite object will be populated recursively.
+
+```go
+
+    package main
+    
+    import rof "github.com/leakingtapan/rof-go"
+    
+    type Singer struct {
+        FirstName string
+        LastName string
+        Songs []struct {
+           Title string 
+        } 
+    }
+    
+    func main() {
+        var s Singer
+        rof.Create(&s)
+    }
+
+```
+
+### Supported Built-in Types
+* Primitives Types:
+  - int, int8, int16, int32, int64
+  - uint, uint8, uint16, uint32, uint64
+* Composite Types:
+  - [time.Time](https://golang.org/pkg/time/#Time)
+
+
+### Customize function providers
+Each built-in types are creates using pre-built function similar to following signature:
+
+```go
+
+    func intFunc() int {
+        return 128
+    }
+
+```
+
+A custom function can be passed in using `SetFunc` API:
+
+```go
+
+    rof.SetFunc(func() string {
+        return "my own string"
+    })
+
+```
+
+Then this functio will be used in all the following variable creation.

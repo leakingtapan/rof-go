@@ -1,0 +1,18 @@
+language: go
+go_import_path: github.com/leakingtapan/rof-go
+
+env:
+  global:
+    - GO111MODULE=on
+
+go:
+  - "1.10.x"
+  - "1.11.2"
+
+before_install:
+  - go get github.com/mattn/goveralls
+
+script:
+  - make
+  - go test -covermode=count -coverprofile=profile.cov ./pkg/...
+  - $GOPATH/bin/goveralls -coverprofile=profile.cov -service=travis-ci

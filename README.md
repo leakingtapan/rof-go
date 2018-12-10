@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/leakingtapan/rof-go.svg?branch=master)](https://travis-ci.org/leakingtapan/rof-go)
 # Object Factory Go
 Object Factory Go populates Go struct with randome value. This greatly saves time to create randomized object in unit testing. It carries the same philosophy as [Reflection Object Factory](https://github.com/leakingtapan/rof) in Java.
 
